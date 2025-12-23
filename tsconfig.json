@@ -6,6 +6,11 @@
     "strict": true,
     "esModuleInterop": true,
     "ignoreDeprecations": "5.0",
-    "outDir": "dist"
-  }
+    "outDir": "dist",
+    "skipLibCheck": true
+  },
+  "include": [
+    "src",
+    "generated"
+  ]
 }

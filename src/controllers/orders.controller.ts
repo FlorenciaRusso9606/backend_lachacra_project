@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import { prisma } from '../lib/prisma'
 import { AppError } from '../errors/AppError.js'
 
+
+
 export const createOrder = async (req: Request, res: Response) => {
   const { items } = req.body
 
@@ -18,7 +20,7 @@ export const createOrder = async (req: Request, res: Response) => {
     })
 
     for (const item of items) {
-      const product = products.find(p => p.id === item.productId)
+      const product = products.find((p) => p.id === item.productId)
 
       if (!product) {
         throw new AppError(`Producto ${item.productId} no existe`, 404)
@@ -54,7 +56,7 @@ export const createOrder = async (req: Request, res: Response) => {
           create: items.map((item: any) => ({
             productId: item.productId,
             quantity: item.quantity,
-            price: products.find(p => p.id === item.productId)!.price,
+            price: products.find((p:any) => p.id === item.productId)!.price,
           })),
         },
       },

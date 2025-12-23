@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { prisma } from '../lib/prisma'
 import { AppError } from "../errors/AppError";
+
 export const getProducts = async (_req: Request, res: Response) => {
   const products = await prisma.product.findMany({
     where: { active: true },
