@@ -1,0 +1,78 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum OrderStatus {
+  pending
+  paid
+  cancelled
+  expired
+}
+
+model Product {
+  id        Int      @id @default(autoincrement())
+  name      String
+  price     Int
+  stock     Int
+  weight    String?
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  orderItems OrderItem[]
+}
+
+model Order {
+  id        Int         @id @default(autoincrement())
+  total     Int
+  status    OrderStatus @default(pending)
+  createdAt DateTime    @default(now())
+
+  items    OrderItem[]
+  payments Payment[]
+}
+
+model Admin {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+}
+
+model OrderItem {
+  quantity Int
+  price    Int
+
+  order   Order @relation(fields: [orderId], references: [id])
+  orderId Int
+
+  product   Product @relation(fields: [productId], references: [id])
+  productId Int
+
+  @@id([orderId, productId])
+}
+
+enum PaymentStatus {
+  pending
+  approved
+  rejected
+  cancelled
+}
+
+model Payment {
+  id          Int           @id @default(autoincrement())
+  orderId     Int
+  provider    String // mercado_pago
+  providerRef String? // id del pago en MP
+  status      PaymentStatus @default(pending)
+  amount      Int
+  createdAt   DateTime      @default(now())
+
+  order Order @relation(fields: [orderId], references: [id])
+}
