@@ -96,8 +96,8 @@ if (!customerName || !email) {
     throw new AppError('Items inválidos', 400)
   }
 
-const order = await prisma.$transaction(async (tx: typeof prisma) => {
-    const products = await tx.product.findMany({
+const order = await prisma.$transaction(async (tx) => {
+      const products = await tx.product.findMany({
       where: {
         id: { in: items.map((i: any) => i.productId) },
         active: true,
