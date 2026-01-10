@@ -32,17 +32,19 @@ model Order {
   total     Int
   status    OrderStatus @default(pending)
   createdAt DateTime    @default(now())
-
+  customerName  String
+  email String
+  expiresAt DateTime
   items    OrderItem[]
   payments Payment[]
 }
 
 model Admin {
-  id        Int      @id @default(autoincrement())
-  name      String
-  email     String   @unique
-  password  String
-  createdAt DateTime @default(now())
+  id             String   @id @default(uuid())
+  name           String
+  email          String   @unique
+  hashedPassword String
+  createdAt      DateTime @default(now())
 }
 
 model OrderItem {
