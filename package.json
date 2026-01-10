@@ -1,7 +1,6 @@
 {
   "name": "backend_la_chacra",
   "version": "1.0.0",
-  "type": "module",
   "scripts": {
     "dev": "tsx src/index.ts",
     "build": "prisma generate && tsc",
