@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { prisma } from '../lib/prisma'
 import { AppError } from '../errors/AppError'
-import { OrderStatus } from '../../generated/prisma/client'
+import { OrderStatus } from '@prisma/client'
 
 
 export const getAllOrders = async (req: Request, res: Response) => {
@@ -96,7 +96,7 @@ if (!customerName || !email) {
     throw new AppError('Items inválidos', 400)
   }
 
-  const order = await prisma.$transaction(async (tx) => {
+const order = await prisma.$transaction(async (tx: typeof prisma) => {
     const products = await tx.product.findMany({
       where: {
         id: { in: items.map((i: any) => i.productId) },
@@ -105,7 +105,7 @@ if (!customerName || !email) {
     })
 
     for (const item of items) {
-      const product = products.find((p) => p.id === item.productId)
+      const product = products.find((p: any) => p.id === item.productId)
 
       if (!product) {
         throw new AppError(`Producto ${item.productId} no existe`, 404)
@@ -128,7 +128,7 @@ if (!customerName || !email) {
       })
     }
 
-    const total = products.reduce((sum, product) => {
+const total = products.reduce((sum: number, product: any) => {
       const item = items.find((i: any) => i.productId === product.id)!
       return sum + product.price * item.quantity
     }, 0)
