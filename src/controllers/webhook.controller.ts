@@ -8,11 +8,13 @@ export const mercadoPagoWebhook = async (
   req: Request,
   res: Response
 ) => {
+const isDev = process.env.NODE_ENV !== 'production'
 
- //Autenticidad
- 
+
+if (!isDev) {
   const signature = req.headers['x-signature']
   const requestId = req.headers['x-request-id']
+
   if (
     typeof signature !== 'string' ||
     typeof requestId !== 'string'
@@ -20,19 +22,21 @@ export const mercadoPagoWebhook = async (
     return res.sendStatus(401)
   }
 
-      const rawBody = (req as any).rawBody 
-const isValidSignature = validateMercadoPagoSignature({
-  signature,
-  requestId,
-  rawBody: rawBody.toString(),
-  secret: process.env.MP_WEBHOOK_SECRET!,
-})
+  const rawBody = (req as any).rawBody
+
+  const isValidSignature = validateMercadoPagoSignature({
+    signature,
+    requestId,
+    rawBody: rawBody.toString(),
+    secret: process.env.MP_WEBHOOK_SECRET!,
+  })
 
   if (!isValidSignature) {
     return res.sendStatus(403)
   }
+}
 
-  
+
 
 //Filtro del evento   
 const dataId =

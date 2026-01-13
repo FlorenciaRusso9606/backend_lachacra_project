@@ -8,6 +8,7 @@ import StockRoutes from "./routes/stock.routes"
 import { errorMiddleware } from './middlewares/error.middleware'
 import rateLimit from 'express-rate-limit'
 export const app = express()
+app.set('trust proxy', 1)
 app.use(
   express.json({
     verify: (req: any, _res, buf) => {
