@@ -4,6 +4,7 @@ import orderRoutes from './routes/orders.routes'
 import paymentRoutes from './routes/payments.routes'
 import webhooksRoutes from './routes/webhook.routes'
 import AuthRoutes from "./routes/auth.routes"
+import StockRoutes from "./routes/stock.routes"
 import { errorMiddleware } from './middlewares/error.middleware'
 import rateLimit from 'express-rate-limit'
 export const app = express()
@@ -19,7 +20,7 @@ console.log('NOTIFICATION URL:', process.env.API_URL + '/webhooks/mercadopago')
 app.use('/products', productsRoutes)
 app.use('/orders', orderRoutes)
 app.use('/payments', paymentRoutes)
-
+app.use(StockRoutes)
 
 app.use(
   '/webhooks/mercadopago',
