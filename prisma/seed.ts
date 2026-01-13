@@ -1,6 +1,6 @@
 import 'dotenv/config'
 import { PrismaPg } from '@prisma/adapter-pg'
-import { PrismaClient } from '../generated/prisma/client'
+import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcrypt'
 
 const connectionString = `${process.env.DATABASE_URL}`
@@ -25,14 +25,17 @@ async function main() {
 
   console.log('Admin seed creado / verificado')*/
   await prisma.product.createMany({
-  data: [
-    {
-      name: "Producto Test",
-      price: 1000,
-      stock: 10
-    }
-  ]
-})
+    data: [
+      { name: "Dulce de pera", price: 8000, stock: 0, weight:"460g"},
+      { name: "Dulce de manzana", price: 8000, stock: 0, weight:"460g"},
+      { name: "Dulce de durazno", price: 9000, stock: 0, weight:"460g"},
+      { name: "Dulce de frutilla", price: 13000, stock: 0 , weight:"460g"},
+      { name: "Dulce de higo", price: 9000, stock: 0 , weight:"460g"},
+  { name: "Puré de manzana", price: 16000, stock: 0 , weight:"460g"},
+  { name: "Puré de ciruela", price: 16000, stock: 0 , weight:"460g"},
+    ],
+    skipDuplicates: true
+  })
 }
 
 

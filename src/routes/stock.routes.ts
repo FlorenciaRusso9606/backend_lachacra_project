@@ -1,14 +1,8 @@
 import { Router } from 'express'
-
+import { syncStock } from '../controllers/products.controller'
+import { stockAuth } from "../middlewares/stockAuth"
 const router = Router()
 
-router.post('/sync-stock', async (req, res) => {
-  console.log('Stock recibido desde Sheets:', req.body)
-
-  return res.status(200).json({
-    ok: true,
-    received: req.body,
-  })
-})
+router.post('/sync-stock',stockAuth , syncStock)
 
 export default router

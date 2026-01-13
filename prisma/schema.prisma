@@ -1,5 +1,5 @@
 generator client {
-provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -15,7 +15,7 @@ enum OrderStatus {
 
 model Product {
   id        Int      @id @default(autoincrement())
-  name      String
+  name      String   @unique
   price     Int
   stock     Int
   weight    String?
@@ -27,15 +27,15 @@ model Product {
 }
 
 model Order {
-  id        Int         @id @default(autoincrement())
-  total     Int
-  status    OrderStatus @default(pending)
-  createdAt DateTime    @default(now())
-  customerName  String
-  email String
-  expiresAt DateTime
-  items    OrderItem[]
-  payments Payment[]
+  id           Int         @id @default(autoincrement())
+  total        Int
+  status       OrderStatus @default(pending)
+  createdAt    DateTime    @default(now())
+  customerName String
+  email        String
+  expiresAt    DateTime
+  items        OrderItem[]
+  payments     Payment[]
 }
 
 model Admin {

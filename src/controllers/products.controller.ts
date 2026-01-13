@@ -53,3 +53,48 @@ export const deleteProduct = async (req: Request, res: Response) => {
   res.json({ message: 'Product disabled' })
 }
 
+
+export const syncStock = async (req: Request, res: Response) => {
+  try {
+    const { insumo, stockActual } = req.body
+
+    if (!insumo || typeof stockActual !== "number") {
+      return res.status(400).json({
+        ok: false,
+        message: "Datos inválidos"
+      })
+    }
+
+    const product = await prisma.product.findUnique({
+     where: { name: insumo.trim() }
+
+    })
+
+    if (!product) {
+    return res.status(404).json({
+      ok: false,
+      message: `Producto no encontrado: ${insumo}`
+    })
+  }
+
+    const updatedProduct = await prisma.product.update({
+    where: { id: product.id },
+    data: { stock: stockActual }
+  })
+
+
+    return res.json({
+      ok: true,
+      action: "updated",
+      product: updatedProduct
+    })
+
+  } catch (error) {
+    console.error("sync-stock error:", error)
+
+    return res.status(500).json({
+      ok: false,
+      message: "Error sincronizando stock"
+    })
+  }
+}
