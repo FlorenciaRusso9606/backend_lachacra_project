@@ -1,5 +1,5 @@
 import { app } from './app.js'
-const PORT =  process.env.NODE_ENV === "production" ? :  8080
+
 
 const BACKEND_URL =
   process.env.NODE_ENV === "production"
