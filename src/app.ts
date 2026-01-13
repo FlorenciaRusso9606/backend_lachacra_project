@@ -23,7 +23,7 @@ app.use('/payments', paymentRoutes)
 app.use(StockRoutes)
 
 app.use(
-  '/webhooks/mercadopago',
+  '/webhooks',
   rateLimit({
     windowMs: 60 * 1000,
     max: 100,
