@@ -10,7 +10,7 @@ const adapter = new PrismaPg({ connectionString })
 const prisma = new PrismaClient({ adapter })
 
 async function main() {
-  /*const password = process.env.ADMIN_PASSWORD || ""
+  const password = process.env.ADMIN_PASSWORD || ""
   const passwordHash = await bcrypt.hash(password, 10)
 
   await prisma.admin.upsert({
@@ -23,7 +23,7 @@ async function main() {
     },
   })
 
-  console.log('Admin seed creado / verificado')*/
+  console.log('Admin seed creado / verificado')
   await prisma.product.createMany({
     data: [
       { name: "Dulce de pera", price: 8000, stock: 0, weight:"460g"},

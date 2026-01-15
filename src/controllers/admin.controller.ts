@@ -42,7 +42,7 @@ const { hashedPassword, ...safeAdmin } = admin;
 
 
 export const getUser = async (req: Request, res:Response) =>{
-  const idUser = req.params.id
+  const idUser = req.user?.id
   const user = await prisma.admin.findUnique({where: {
     id: idUser,
   },})
@@ -57,7 +57,7 @@ export const getUser = async (req: Request, res:Response) =>{
 export const logoutAdmin = (req: Request, res: Response) => {
   res.clearCookie("token", {
     httpOnly: true,
-    secure: true,
+       secure: process.env.NODE_ENV === "production",
      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     path: "/",
   });
