@@ -16,7 +16,6 @@ app.use(
     },
   })
 )
-console.log('NOTIFICATION URL:', process.env.API_URL + '/webhooks/mercadopago')
 
 app.use('/products', productsRoutes)
 app.use('/orders', orderRoutes)
