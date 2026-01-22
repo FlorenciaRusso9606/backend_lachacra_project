@@ -5,9 +5,13 @@ import paymentRoutes from './routes/payments.routes'
 import webhooksRoutes from './routes/webhook.routes'
 import AuthRoutes from "./routes/auth.routes"
 import StockRoutes from "./routes/stock.routes"
+import adminProductsRoutes from './routes/admin/products.admin'
+import adminOrdersRoutes from './routes/admin/orders.adimn'
 import { errorMiddleware } from './middlewares/error.middleware'
 import rateLimit from 'express-rate-limit'
 import cors from "cors"
+import cookieParser from "cookie-parser";
+
 
 const isProd = process.env.NODE_ENV === "production";
 
@@ -21,6 +25,7 @@ app.use(cors({
   credentials: true,
 }));
 
+app.use(cookieParser());
 
 app.use(
   express.json({
@@ -29,7 +34,8 @@ app.use(
     },
   })
 )
-
+app.use("/admin/products", adminProductsRoutes);
+app.use("/admin/orders", adminOrdersRoutes);
 app.use('/products', productsRoutes)
 app.use('/orders', orderRoutes)
 app.use('/payments', paymentRoutes)

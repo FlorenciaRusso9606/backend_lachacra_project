@@ -98,3 +98,10 @@ export const syncStock = async (req: Request, res: Response) => {
     })
   }
 }
+export const getAllProductsAdmin = async (_req: Request, res: Response) => {
+  const products = await prisma.product.findMany({
+    orderBy: { id: "asc" },
+  });
+
+  res.json(products);
+};

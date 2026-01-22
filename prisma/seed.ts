@@ -23,7 +23,6 @@ async function main() {
     },
   })
 
-  console.log('Admin seed creado / verificado')
   await prisma.product.createMany({
     data: [
       { name: "Dulce de pera", price: 8000, stock: 0, weight:"460g"},

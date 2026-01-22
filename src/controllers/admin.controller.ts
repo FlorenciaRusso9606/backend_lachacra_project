@@ -11,6 +11,7 @@ if (!JWT_SECRET) {
   throw new Error("Falta JWT_SECRET en .env");
 }
 export const loginAdmin = async (req: Request, res: Response) => {
+
   const { email, password } = req.body
 
   if (!email || !password) {
@@ -29,7 +30,6 @@ export const loginAdmin = async (req: Request, res: Response) => {
       JWT_SECRET,
       { expiresIn: "7d" }
     );
-    
 
 
 res.cookie("token", token, {
@@ -42,9 +42,11 @@ res.cookie("token", token, {
 
 });
 
+
 const { hashedPassword, ...safeAdmin } = admin;
   res.status(200).json(safeAdmin)
 }
+
 
 
 export const getUser = async (req: Request, res:Response) =>{
