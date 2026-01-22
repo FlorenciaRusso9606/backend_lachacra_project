@@ -3,6 +3,7 @@ import { prisma } from '../lib/prisma'
 import * as bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
+     const isProd = process.env.NODE_ENV === "production";
 
 import { AppError } from "../errors/AppError";
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -28,14 +29,19 @@ export const loginAdmin = async (req: Request, res: Response) => {
       JWT_SECRET,
       { expiresIn: "7d" }
     );
- const cookieOptions = {
-      httpOnly: true,
-     secure: process.env.NODE_ENV === "production",
-       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-      path: "/",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    } as any;
-        res.cookie("token", token, cookieOptions);
+    
+
+
+res.cookie("token", token, {
+  httpOnly: true,
+  secure: isProd ? true : false,
+  sameSite: isProd ? "lax" : "lax",
+  domain: isProd ? ".dulceslachacra.com" : undefined,
+  path: "/",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+
+});
+
 const { hashedPassword, ...safeAdmin } = admin;
   res.status(200).json(safeAdmin)
 }
@@ -55,12 +61,15 @@ export const getUser = async (req: Request, res:Response) =>{
 }
 
 export const logoutAdmin = (req: Request, res: Response) => {
-  res.clearCookie("token", {
-    httpOnly: true,
-       secure: process.env.NODE_ENV === "production",
-     sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-    path: "/",
-  });
+
+res.clearCookie("token", {
+  httpOnly: true,
+  secure: isProd,
+  sameSite: "lax",
+  domain: isProd ? ".dulceslachacra.com" : undefined,
+  path: "/",
+});
+
   res.json({ message: "Logout exitoso" });
 };
 
