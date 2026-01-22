@@ -6,7 +6,7 @@ import webhooksRoutes from './routes/webhook.routes'
 import AuthRoutes from "./routes/auth.routes"
 import StockRoutes from "./routes/stock.routes"
 import adminProductsRoutes from './routes/admin/products.admin'
-import adminOrdersRoutes from './routes/admin/orders.adimn'
+import adminOrdersRoutes from './routes/admin/orders.admin'
 import { errorMiddleware } from './middlewares/error.middleware'
 import rateLimit from 'express-rate-limit'
 import cors from "cors"
