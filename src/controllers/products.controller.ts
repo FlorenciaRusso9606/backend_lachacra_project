@@ -27,6 +27,8 @@ export const createProduct = async (req: Request, res: Response) => {
 
 
 export const updateProduct = async (req: Request, res: Response) => {
+
+
   const id = Number(req.params.id);
 
   if (isNaN(id)) {
@@ -53,27 +55,31 @@ export const updateProduct = async (req: Request, res: Response) => {
   if (name) data.name = name;
   if (price !== undefined) data.price = Number(price);
   if (stock !== undefined) data.stock = Number(stock);
-
-  // Eliminar imagen existente
-  if (removeImage === "true" && product.imageUrl) {
-    const filePath = path.join(process.cwd(), product.imageUrl);
-    if (fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath);
-    }
-    data.imageUrl = null;
+  // Verificar si remover imagen es true
+  const shouldRemoveImage =
+  removeImage === "true" || removeImage === true || removeImage === "1";
+ 
+  // Reemplazar imagen o eliminar imagen existente
+ if (req.file) {
+  if (product.imageUrl) {
+    const oldPath = path.resolve(
+      "uploads/products",
+      path.basename(product.imageUrl)
+    );
+    if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
   }
 
-  // Reemplazar imagen
-  if (req.file) {
-    if (product.imageUrl) {
-      const oldPath = path.join(process.cwd(), product.imageUrl);
-      if (fs.existsSync(oldPath)) {
-        fs.unlinkSync(oldPath);
-      }
-    }
-    data.imageUrl = `/uploads/products/${req.file.filename}`;
-  }
+  data.imageUrl = `/uploads/products/${req.file.filename}`;
 
+} else if (shouldRemoveImage && product.imageUrl) {
+  const oldPath = path.resolve(
+    "uploads/products",
+    path.basename(product.imageUrl)
+  );
+  if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+
+  data.imageUrl = null;
+}  
   const updatedProduct = await prisma.product.update({
     where: { id },
     data,
