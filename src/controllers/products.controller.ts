@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
 import { prisma } from '../lib/prisma'
 import { AppError } from "../errors/AppError";
-
+import fs from "node:fs";
+import path from "node:path";
 export const getProducts = async (_req: Request, res: Response) => {
   const products = await prisma.product.findMany({
     where: { active: true },
@@ -23,20 +24,65 @@ export const createProduct = async (req: Request, res: Response) => {
   res.status(201).json(product)
 }
 
+
+
 export const updateProduct = async (req: Request, res: Response) => {
-  const id = Number(req.params.id)
+  const id = Number(req.params.id);
 
   if (isNaN(id)) {
-    throw new AppError('ID inválido', 400)
+    throw new AppError("ID inválido", 400);
   }
 
-  const product = await prisma.product.update({
+  const product = await prisma.product.findUnique({
     where: { id },
-    data: req.body,
-  })
+  });
 
-  res.json(product)
-}
+  if (!product) {
+    throw new AppError("Producto no encontrado", 404);
+  }
+
+  const { name, price, stock, removeImage } = req.body;
+
+  const data: {
+    name?: string;
+    price?: number;
+    stock?: number;
+    imageUrl?: string | null;
+  } = {};
+
+  if (name) data.name = name;
+  if (price !== undefined) data.price = Number(price);
+  if (stock !== undefined) data.stock = Number(stock);
+
+  // Eliminar imagen existente
+  if (removeImage === "true" && product.imageUrl) {
+    const filePath = path.join(process.cwd(), product.imageUrl);
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+    }
+    data.imageUrl = null;
+  }
+
+  // Reemplazar imagen
+  if (req.file) {
+    if (product.imageUrl) {
+      const oldPath = path.join(process.cwd(), product.imageUrl);
+      if (fs.existsSync(oldPath)) {
+        fs.unlinkSync(oldPath);
+      }
+    }
+    data.imageUrl = `/uploads/products/${req.file.filename}`;
+  }
+
+  const updatedProduct = await prisma.product.update({
+    where: { id },
+    data,
+  });
+
+  res.json(updatedProduct);
+};
+
+
 
 export const deleteProduct = async (req: Request, res: Response) => {
   const id = Number(req.params.id)

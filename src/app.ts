@@ -11,7 +11,7 @@ import { errorMiddleware } from './middlewares/error.middleware'
 import rateLimit from 'express-rate-limit'
 import cors from "cors"
 import cookieParser from "cookie-parser";
-
+import path from 'node:path'
 
 const isProd = process.env.NODE_ENV === "production";
 
@@ -34,6 +34,10 @@ app.use(
     },
   })
 )
+app.use(
+  "/uploads",
+  express.static(path.join(process.cwd(), "uploads"))
+);
 app.use("/admin/products", adminProductsRoutes);
 app.use("/admin/orders", adminOrdersRoutes);
 app.use('/products', productsRoutes)
