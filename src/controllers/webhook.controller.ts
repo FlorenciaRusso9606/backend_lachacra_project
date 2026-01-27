@@ -8,10 +8,10 @@ export const mercadoPagoWebhook = async (req: Request, res: Response) => {
 
   console.log('[MP WEBHOOK] Incoming webhook')
 
-  /* =========================
+  /* 
      FIRMA (solo producción)
-     ========================= */
-  if (!isDev) {
+     
+if (!isDev) {
     const signature = req.headers['x-signature']
     const requestId = req.headers['x-request-id']
 
@@ -33,11 +33,11 @@ export const mercadoPagoWebhook = async (req: Request, res: Response) => {
       console.error('[MP WEBHOOK] Invalid signature')
       return res.sendStatus(200)
     }
-  }
+  }*/
 
-  /* =========================
+  /* 
      FILTRO DEL EVENTO
-     ========================= */
+     */
   const dataId =
     req.body?.data?.id ??
     req.query?.['data.id'] ??
@@ -53,9 +53,9 @@ export const mercadoPagoWebhook = async (req: Request, res: Response) => {
     return res.sendStatus(200)
   }
 
-  /* =========================
+  /* 
      CONSULTA A MP
-     ========================= */
+      */
   let mpPayment
 
   try {
@@ -84,9 +84,9 @@ export const mercadoPagoWebhook = async (req: Request, res: Response) => {
     return res.sendStatus(200)
   }
 
-  /* =========================
+  /*
      BUSCAR PAYMENT LOCAL
-     ========================= */
+     */
   const externalRef = mpPayment.external_reference
   const numericExternalRef =
     typeof externalRef === 'string' ? Number(externalRef) : NaN
@@ -110,9 +110,7 @@ export const mercadoPagoWebhook = async (req: Request, res: Response) => {
     return res.sendStatus(200)
   }
 
-  /* =========================
-     CHEQUEO DE MONTO
-     ========================= */
+  /*     CHEQUEO DE MONTO */
   if (payment.amount !== mpPayment.transaction_amount) {
     console.error('[MP WEBHOOK] Amount mismatch', {
       local: payment.amount,
@@ -121,17 +119,17 @@ export const mercadoPagoWebhook = async (req: Request, res: Response) => {
     return res.sendStatus(200)
   }
 
-  /* =========================
+  /*
      IDEMPOTENCIA
-     ========================= */
+     */
   if (payment.status === 'approved') {
     console.log('[MP WEBHOOK] Payment already approved, skipping')
     return res.sendStatus(200)
   }
 
-  /* =========================
+  /* 
      TRANSICIÓN DE ESTADO
-     ========================= */
+      */
   const status = mpPayment.status
 
   if (status === 'approved') {
