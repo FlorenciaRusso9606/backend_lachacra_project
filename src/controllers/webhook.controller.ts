@@ -56,7 +56,8 @@ let mpPayment
   try {
     mpPayment = await paymentClient.get({ id: dataId , requestOptions: { timeout: 5000 }})
   } catch {
-     throw new AppError('[MP] Error al obtener payment', 200)
+console.error('[MP] Error al obtener payment', dataId)
+return res.sendStatus(200)
   
   }
   const externalRef = mpPayment.external_reference
@@ -115,15 +116,35 @@ if (!payment) {
         data: { status: 'paid' },
       }),
     ])
-  } else {
-    await prisma.payment.update({
+  } else if (status === 'pending' || status === 'in_process') {
+      return res.sendStatus(200)
+   } else {
+  await prisma.$transaction([
+    prisma.payment.update({
       where: { id: paymentId },
       data: {
         status: 'rejected',
         providerRef: mpPayment.id.toString(),
       },
-    })
-  }
+    }),
+    prisma.order.update({
+      where: { id: payment.orderId },
+      data: { status: 'cancelled' },
+    }),
+    ...(
+      await prisma.orderItem.findMany({
+        where: { orderId: payment.orderId },
+      })
+    ).map(item =>
+      prisma.product.update({
+        where: { id: item.productId },
+        data: {
+          stock: { increment: item.quantity },
+        },
+      })
+    ),
+  ])
+}
 
   res.sendStatus(200)
 }
