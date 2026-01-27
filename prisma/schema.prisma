@@ -12,7 +12,10 @@ enum OrderStatus {
   cancelled
   expired
 }
-
+enum CategoryStatus {
+  DULCE
+  PURE
+}
 model Product {
   id        Int      @id @default(autoincrement())
   name      String   @unique
@@ -23,7 +26,8 @@ model Product {
   active    Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
+  category CategoryStatus @default(DULCE)
+  color    String?
   orderItems OrderItem[]
 }
 

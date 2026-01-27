@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { prisma } from '../lib/prisma'
 import { AppError } from "../errors/AppError";
+import { CategoryStatus } from "@prisma/client";
 import fs from "node:fs";
 import path from "node:path";
 export const getProducts = async (_req: Request, res: Response) => {
@@ -43,18 +44,35 @@ export const updateProduct = async (req: Request, res: Response) => {
     throw new AppError("Producto no encontrado", 404);
   }
 
-  const { name, price, stock, removeImage } = req.body;
+  const { name, price, stock, weight, category, color, removeImage } = req.body;
 
   const data: {
     name?: string;
     price?: number;
     stock?: number;
+    weight?: string;
+    category?: CategoryStatus;
+    color?: string;
     imageUrl?: string | null;
   } = {};
 
   if (name) data.name = name;
   if (price !== undefined) data.price = Number(price);
   if (stock !== undefined) data.stock = Number(stock);
+   if (weight !== undefined) data.weight = String(weight);
+    if (category !== undefined) {
+  if (!Object.values(CategoryStatus).includes(category)) {
+    throw new AppError("Categoría inválida", 400);
+  }
+  data.category = category;
+}
+if (color !== undefined) {
+  if (!/^#([0-9A-F]{3}){1,2}$/i.test(color)) {
+    throw new AppError("Color inválido", 400);
+  }
+  data.color = color;
+}
+  
   // Verificar si remover imagen es true
   const shouldRemoveImage =
   removeImage === "true" || removeImage === true || removeImage === "1";
