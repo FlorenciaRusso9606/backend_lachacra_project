@@ -1,6 +1,11 @@
 import nodemailer from 'nodemailer';
 import { OrderEmailPayload } from '../types/OrderEmailPayload';
 import 'dotenv/config'
+console.log('[MAIL ENV CHECK]', {
+  MAIL_HOST: process.env.MAIL_HOST,
+  MAIL_PORT: process.env.MAIL_PORT,
+  MAIL_USER: process.env.MAIL_USER,
+})
 
 export const mailer = nodemailer.createTransport({
   host: process.env.MAIL_HOST,

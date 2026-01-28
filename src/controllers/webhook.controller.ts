@@ -1,23 +1,30 @@
 import { Request, Response } from 'express'
 import { paymentClient } from '../services/mercadoPago.client.js'
 import { prisma } from '../lib/prisma.js'
+import { OrderItem } from '@prisma/client'
+
 import { validateMercadoPagoSignature } from '../utils/validateMercadoPagoSignature.js'
-import { sendNewOrderEmail, sendCustomerOrderEmail } from '../services/email.service.js'
+import {
+  sendNewOrderEmail,
+  sendCustomerOrderEmail,
+} from '../services/email.service.js'
+
 export const mercadoPagoWebhook = async (req: Request, res: Response) => {
   const isDev = process.env.NODE_ENV !== 'production'
 
   console.log('[MP WEBHOOK] Incoming webhook')
 
-  /* 
+  /* ======================================================
      FIRMA (solo producción)
-     
-if (!isDev) {
+  ====================================================== */
+  /*
+  if (!isDev) {
     const signature = req.headers['x-signature']
     const requestId = req.headers['x-request-id']
 
     if (typeof signature !== 'string' || typeof requestId !== 'string') {
       console.error('[MP WEBHOOK] Missing signature headers')
-      return res.sendStatus(200) // siempre 200 a MP
+      return res.sendStatus(200)
     }
 
     const rawBody = (req as any).rawBody
@@ -33,11 +40,12 @@ if (!isDev) {
       console.error('[MP WEBHOOK] Invalid signature')
       return res.sendStatus(200)
     }
-  }*/
+  }
+  */
 
-  /* 
+  /* ======================================================
      FILTRO DEL EVENTO
-     */
+  ====================================================== */
   const dataId =
     req.body?.data?.id ??
     req.query?.['data.id'] ??
@@ -53,7 +61,9 @@ if (!isDev) {
     return res.sendStatus(200)
   }
 
-  /*  CONSULTA A MP */
+  /* ======================================================
+     CONSULTA A MERCADO PAGO
+  ====================================================== */
   let mpPayment
 
   try {
@@ -82,7 +92,9 @@ if (!isDev) {
     return res.sendStatus(200)
   }
 
-  /* BUSCAR PAYMENT */
+  /* ======================================================
+     BUSCAR PAYMENT LOCAL
+  ====================================================== */
   const externalRef = mpPayment.external_reference
   const numericExternalRef =
     typeof externalRef === 'string' ? Number(externalRef) : NaN
@@ -106,7 +118,9 @@ if (!isDev) {
     return res.sendStatus(200)
   }
 
-  /* CHEQUEO DE MONTO */
+  /* ======================================================
+     CHEQUEO DE MONTO
+  ====================================================== */
   if (payment.amount !== mpPayment.transaction_amount) {
     console.error('[MP WEBHOOK] Amount mismatch', {
       local: payment.amount,
@@ -115,87 +129,104 @@ if (!isDev) {
     return res.sendStatus(200)
   }
 
-  /* IDEMPOTENCIA */
-  if (payment.status === 'approved') {
-    console.log('[MP WEBHOOK] Payment already approved, skipping')
-    return res.sendStatus(200)
-  }
-
-  /*  TRANSICIÓN DE ESTADO */
+  /* ======================================================
+     TRANSICIÓN DE ESTADO (IDEMPOTENTE)
+  ====================================================== */
   const status = mpPayment.status
 
- if (status === 'approved') {
-  console.log('[MP WEBHOOK] Approving payment', payment.id)
+  if (status === 'approved') {
+    console.log('[MP WEBHOOK] Payment approved event', payment.id)
 
-  await prisma.$transaction([
-    prisma.payment.update({
-      where: { id: payment.id },
-      data: {
-        status: 'approved',
-        providerRef: mpPayment.id.toString(),
-      },
-    }),
-    prisma.order.update({
-      where: { id: payment.orderId },
-      data: { status: 'paid' },
-    }),
-  ])
+    const shouldUpdateStatus = payment.status !== 'approved'
+    const shouldSendEmails = !payment.emailSent
 
-  const order = await prisma.order.findUnique({
-    where: { id: payment.orderId },
-    include: {
-      items: {
+    if (shouldUpdateStatus) {
+      await prisma.$transaction([
+        prisma.payment.update({
+          where: { id: payment.id },
+          data: {
+            status: 'approved',
+            providerRef: mpPayment.id.toString(),
+          },
+        }),
+        prisma.order.update({
+          where: { id: payment.orderId },
+          data: { status: 'paid' },
+        }),
+      ])
+    }
+
+    if (shouldSendEmails) {
+      const order = await prisma.order.findUnique({
+        where: { id: payment.orderId },
         include: {
-          product: true,
+          items: {
+            include: { product: true },
+          },
         },
-      },
-    },
-  })
+      })
 
-  if (!order) {
-    console.error('[MP WEBHOOK] Order not found after payment', payment.orderId)
+      if (!order) {
+        console.error('[MP WEBHOOK] Order not found', payment.orderId)
+        return res.sendStatus(200)
+      }
+
+      try {
+        await sendNewOrderEmail(order)
+        await sendCustomerOrderEmail(order)
+
+        await prisma.payment.update({
+          where: { id: payment.id },
+          data: { emailSent: true },
+        })
+
+        console.log('[EMAIL] Emails sent successfully')
+      } catch (err) {
+        console.error('[EMAIL] Error sending emails', err)
+      }
+    }
+
     return res.sendStatus(200)
   }
 
-  try {
-    await sendNewOrderEmail(order)
-    await sendCustomerOrderEmail(order)
-  } catch (err) {
-    console.error('[EMAIL] Error sending emails', err)
-  }
-} else if (status === 'pending' || status === 'in_process') {
+  if (status === 'pending' || status === 'in_process') {
     console.log('[MP WEBHOOK] Payment pending/in_process, waiting')
     return res.sendStatus(200)
-  } else {
-    console.log('[MP WEBHOOK] Payment rejected/cancelled', status)
-
-    const items = await prisma.orderItem.findMany({
-      where: { orderId: payment.orderId },
-    })
-
-    await prisma.$transaction([
-      prisma.payment.update({
-        where: { id: payment.id },
-        data: {
-          status: 'rejected',
-          providerRef: mpPayment.id.toString(),
-        },
-      }),
-      prisma.order.update({
-        where: { id: payment.orderId },
-        data: { status: 'cancelled' },
-      }),
-      ...items.map(item =>
-        prisma.product.update({
-          where: { id: item.productId },
-          data: {
-            stock: { increment: item.quantity },
-          },
-        })
-      ),
-    ])
   }
 
+  /* ======================================================
+     RECHAZADO / CANCELADO
+  ====================================================== */
+  console.log('[MP WEBHOOK] Payment rejected/cancelled', status)
+const items: OrderItem[] = await prisma.orderItem.findMany({
+  where: { orderId: payment.orderId },
+})
+
+await prisma.$transaction([
+  prisma.payment.update({
+    where: { id: payment.id },
+    data: {
+      status: 'rejected',
+      providerRef: mpPayment.id.toString(),
+    },
+  }),
+  prisma.order.update({
+    where: { id: payment.orderId },
+    data: { status: 'cancelled' },
+  }),
+  ...items.map((item: OrderItem) =>
+    prisma.product.update({
+      where: { id: item.productId },
+      data: {
+        stock: { increment: item.quantity },
+      },
+    })
+  ),
+])
+
+
+
+
   console.log('[MP WEBHOOK] Webhook processed successfully')
-  res.sendStatus(200)
+  return res.sendStatus(200)
 }

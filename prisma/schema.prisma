@@ -79,6 +79,7 @@ model Payment {
   status      PaymentStatus @default(pending)
   amount      Int
   createdAt   DateTime      @default(now())
+  emailSent    Boolean  @default(false)
 
   order Order @relation(fields: [orderId], references: [id])
 }
