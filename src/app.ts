@@ -13,7 +13,7 @@ import cors from "cors"
 import cookieParser from "cookie-parser";
 import path from 'node:path'
 import 'dotenv/config'
-
+import { sendCustomerOrderEmail } from './services/email.service'
 
 
 
@@ -30,6 +30,13 @@ app.use(cors({
 }));
 
 app.use(cookieParser());
+ sendCustomerOrderEmail({
+  id: 999,
+  customerName: 'Flor',
+  email: 'lachacra74@gmail.com',
+  total: 123,
+  items: [],
+});
 
 app.use(
   express.json({
