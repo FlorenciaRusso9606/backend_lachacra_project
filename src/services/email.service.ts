@@ -1,12 +1,26 @@
 import { Resend } from "resend";
 import { OrderEmailPayload } from "../types/OrderEmailPayload";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 const FROM = process.env.MAIL_FROM ?? "La Chacra <no-reply@resend.dev>";
 
+function getResendClient() {
+  if (!process.env.RESEND_API_KEY) {
+    throw new Error("Missing RESEND_API_KEY");
+  }
+
+  return new Resend(process.env.RESEND_API_KEY);
+}
+
+function assertAdminEmail() {
+  if (!process.env.MAIL_ADMIN_EMAIL) {
+    throw new Error("Missing MAIL_ADMIN_EMAIL");
+  }
+}
 
 export async function sendNewOrderEmail(order: OrderEmailPayload) {
+  assertAdminEmail();
+  const resend = getResendClient();
+
   await resend.emails.send({
     from: FROM,
     to: process.env.MAIL_ADMIN_EMAIL!,
@@ -29,6 +43,8 @@ export async function sendNewOrderEmail(order: OrderEmailPayload) {
 }
 
 export async function sendCustomerOrderEmail(order: OrderEmailPayload) {
+  const resend = getResendClient();
+
   await resend.emails.send({
     from: FROM,
     to: order.email,
