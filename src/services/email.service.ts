@@ -1,13 +1,24 @@
 import nodemailer from 'nodemailer';
 import { OrderEmailPayload } from '../types/OrderEmailPayload';
+import 'dotenv/config'
+
 export const mailer = nodemailer.createTransport({
   host: process.env.MAIL_HOST,
   port: Number(process.env.MAIL_PORT),
-  secure: false,
+  secure: false, 
   auth: {
     user: process.env.MAIL_USER,
     pass: process.env.MAIL_PASS,
   },
+  tls: {
+    rejectUnauthorized: false,
+  },
+  
+});
+
+console.log('[MAIL CONFIG]', {
+  host: process.env.MAIL_HOST,
+  port: process.env.MAIL_PORT,
 });
 
 export async function sendNewOrderEmail(order: OrderEmailPayload) {

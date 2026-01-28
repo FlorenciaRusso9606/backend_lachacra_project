@@ -12,6 +12,13 @@ import rateLimit from 'express-rate-limit'
 import cors from "cors"
 import cookieParser from "cookie-parser";
 import path from 'node:path'
+import 'dotenv/config'
+console.log('[MAIL ENV]', {
+  host: process.env.MAIL_HOST,
+  port: process.env.MAIL_PORT,
+  user: process.env.MAIL_USER,
+});
+
 
 const isProd = process.env.NODE_ENV === "production";
 
