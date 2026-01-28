@@ -21,7 +21,7 @@ export async function sendNewOrderEmail(order: OrderEmailPayload) {
   assertAdminEmail();
   const resend = getResendClient();
 
-  await resend.emails.send({
+  const result =  await resend.emails.send({
     from: FROM,
     to: process.env.MAIL_ADMIN_EMAIL!,
     subject: `🛒 Nueva compra #${order.id} – La Chacra`,
@@ -40,12 +40,13 @@ export async function sendNewOrderEmail(order: OrderEmailPayload) {
       <p><strong>Total:</strong> $${order.total}</p>
     `,
   });
+  console.log('[EMAIL] Resend response', result)
 }
 
 export async function sendCustomerOrderEmail(order: OrderEmailPayload) {
   const resend = getResendClient();
 
-  await resend.emails.send({
+ const result =  await resend.emails.send({
     from: FROM,
     to: order.email,
     subject: "✅ Recibimos tu pedido – La Chacra",
@@ -61,4 +62,5 @@ export async function sendCustomerOrderEmail(order: OrderEmailPayload) {
       <p><strong>Total:</strong> $${order.total}</p>
     `,
   });
+  console.log('[EMAIL] Resend response', result)
 }
