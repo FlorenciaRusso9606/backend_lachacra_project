@@ -13,13 +13,11 @@ import cors from "cors"
 import cookieParser from "cookie-parser";
 import path from 'node:path'
 import 'dotenv/config'
-import { verifyMailer } from './services/email.service'
 
 
 
 
 const isProd = process.env.NODE_ENV === "production";
-verifyMailer()
 
 export const app = express()
 app.set('trust proxy', 1)
