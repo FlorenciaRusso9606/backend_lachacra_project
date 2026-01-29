@@ -58,7 +58,12 @@ export async function sendCustomerOrderEmail(order: OrderEmailPayload) {
         Recibimos correctamente tu pedido.
         En breve nos vamos a contactar para coordinar la entrega.
       </p>
-
+ <h3>Productos</h3>
+      <ul>
+        ${order.items
+          .map(i => `<li>${i.product.name} x ${i.quantity}</li>`)
+          .join("")}
+      </ul>
       <p><strong>Total:</strong> $${order.total}</p>
     `,
   });
