@@ -1,7 +1,7 @@
 import { Resend } from "resend";
 import { OrderEmailPayload } from "../types/OrderEmailPayload";
 
-const FROM = process.env.MAIL_FROM ?? "La Chacra <no-reply@resend.dev>";
+const FROM = process.env.MAIL_FROM ?? "La Chacra <no-reply@dulceslachacra.com>";
 
 function getResendClient() {
   if (!process.env.RESEND_API_KEY) {
