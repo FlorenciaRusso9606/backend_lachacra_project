@@ -32,15 +32,25 @@ model Product {
 }
 
 model Order {
-  id           Int         @id @default(autoincrement())
-  total        Int
-  status       OrderStatus @default(pending)
-  createdAt    DateTime    @default(now())
-  customerName String
-  email        String
-  expiresAt    DateTime
-  items        OrderItem[]
-  payments     Payment[]
+  id            Int         @id @default(autoincrement())
+  total         Int
+  status        OrderStatus @default(pending)
+  createdAt     DateTime    @default(now())
+  expiresAt     DateTime
+
+  customerName  String
+  email         String
+  phone         String?
+
+  country       String      @default("Argentina")
+  province      String
+  city          String
+  postalCode    String
+  addressLine1  String
+  addressLine2  String?
+
+  items         OrderItem[]
+  payments      Payment[]
 }
 
 model Admin {
