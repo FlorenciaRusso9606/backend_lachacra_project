@@ -156,8 +156,10 @@ const productMap = new Map(products.map(p => [p.id, p]))
 
 const total = items.reduce((sum, item) => {
   const product = productMap.get(item.productId)!
-  return sum + product.price * item.quantity
+  return sum + Number(product.price) * item.quantity
 }, 0)
+
+
 
 const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000)
     return  tx.order.create({
@@ -174,13 +176,14 @@ const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000)
     addressLine1,
     addressLine2,
     expiresAt,
-   items: {
+items: {
   create: items.map(item => {
     const product = productMap.get(item.productId)!
     return {
       productId: item.productId,
       quantity: item.quantity,
-      price: product.price,
+      price: Number(product.price),
+
     }
   }),
 },
