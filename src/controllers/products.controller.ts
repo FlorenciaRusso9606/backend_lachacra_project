@@ -124,48 +124,55 @@ export const deleteProduct = async (req: Request, res: Response) => {
 }
 
 
+
 export const syncStock = async (req: Request, res: Response) => {
   try {
-    const { insumo, stockActual } = req.body
+    const { insumo, stockActual, secret } = req.body
 
-    if (!insumo || typeof stockActual !== "number") {
-      return res.status(400).json({
-        ok: false,
-        message: "Datos inválidos"
-      })
+    if (secret !== process.env.STOCK_SYNC_TOKEN){ 
+            return res.status(401).json({ ok: false, message: "No autorizado" })
     }
 
-    const product = await prisma.product.findUnique({
-     where: { name: insumo.trim() }
+    if (!insumo || typeof stockActual !== "number") {
+      return res.status(400).json({ ok: false, message: "Datos inválidos" })
+    }
 
+ 
+
+    const parts = insumo.trim().split(" ")
+    const weight = parts[parts.length - 1]           
+    const name = parts.slice(0, -1).join(" ")       
+
+
+    const product = await prisma.product.findFirst({
+      where: {
+        name: { equals: name, mode: "insensitive" },
+        weight: { equals: weight, mode: "insensitive" },
+        active: true,
+      },
     })
 
     if (!product) {
-    return res.status(404).json({
-      ok: false,
-      message: `Producto no encontrado: ${insumo}`
-    })
-  }
+      return res.status(404).json({
+        ok: false,
+        message: `Producto no encontrado: "${name}" con peso "${weight}"`,
+      })
+    }
 
     const updatedProduct = await prisma.product.update({
-    where: { id: product.id },
-    data: { stock: stockActual }
-  })
-
+      where: { id: product.id },
+      data: { stock: stockActual },
+    })
 
     return res.json({
       ok: true,
       action: "updated",
-      product: updatedProduct
+      product: updatedProduct,
     })
 
   } catch (error) {
     console.error("sync-stock error:", error)
-
-    return res.status(500).json({
-      ok: false,
-      message: "Error sincronizando stock"
-    })
+    return res.status(500).json({ ok: false, message: "Error sincronizando stock" })
   }
 }
 export const getAllProductsAdmin = async (_req: Request, res: Response) => {

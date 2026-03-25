@@ -15,10 +15,11 @@ enum OrderStatus {
 enum CategoryStatus {
   DULCE
   PURE
+  CONFITURA
 }
 model Product {
   id        Int      @id @default(autoincrement())
-  name      String   @unique
+  name      String
   price     Int
   stock     Int
   weight    String?
@@ -26,9 +27,11 @@ model Product {
   active    Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  category CategoryStatus @default(DULCE)
-  color    String?
+  category  CategoryStatus @default(DULCE)
+  color     String?
   orderItems OrderItem[]
+
+  @@unique([name, weight])
 }
 
 model Order {

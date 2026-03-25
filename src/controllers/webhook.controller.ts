@@ -103,7 +103,7 @@ export const mercadoPagoWebhook = async (req: Request, res: Response) => {
     }
 
     /* ======================================================
-       ACTUALIZACIÓN ATÓMICA (CRÍTICA)
+       ACTUALIZACIÓN ATÓMICA 
     ====================================================== */
     await prisma.$transaction([
       prisma.payment.update({
