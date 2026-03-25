@@ -129,9 +129,6 @@ export const syncStock = async (req: Request, res: Response) => {
   try {
     const { insumo, stockActual, secret } = req.body
 
-    if (secret !== process.env.STOCK_SYNC_TOKEN){ 
-            return res.status(401).json({ ok: false, message: "No autorizado" })
-    }
 
     if (!insumo || typeof stockActual !== "number") {
       return res.status(400).json({ ok: false, message: "Datos inválidos" })
