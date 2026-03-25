@@ -7,7 +7,7 @@ E-commerce orientado a mostrar productos regionales y ofrecer una experiencia vi
 
 🔗 Demo en producción: https://dulceslachacra.com
 
-🔐 Panel admin: https://dulceslachacra/ashboard-lch-2026
+🔐 Panel admin: https://dulceslachacra/dashboard-lch-2026
 (Las credenciales no son públicas)
 
 
