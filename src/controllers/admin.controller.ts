@@ -3,7 +3,7 @@ import { prisma } from '../lib/prisma'
 import * as bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-     const isProd = process.env.NODE_ENV === "production";
+const isProd = process.env.NODE_ENV === "production";
 
 import { AppError } from "../errors/AppError";
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -62,17 +62,16 @@ export const getUser = async (req: Request, res:Response) =>{
   })
 }
 
-export const logoutAdmin = (req: Request, res: Response) => {
 
-res.clearCookie("token", {
-  httpOnly: true,
-  secure: isProd,
-  sameSite: "lax",
-  domain: isProd ? ".dulceslachacra.com" : undefined,
-  path: "/",
-});
+export const logoutAdmin = (req: Request, res: Response) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: isProd,
+    sameSite: isProd ? "lax" : "lax", 
+    domain: isProd ? ".dulceslachacra.com" : undefined,
+    path: "/",
+    
+  });
 
   res.json({ message: "Logout exitoso" });
 };
-
-
