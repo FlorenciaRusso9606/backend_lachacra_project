@@ -34,15 +34,12 @@ export const loginAdmin = async (req: Request, res: Response) => {
 
 res.cookie("token", token, {
   httpOnly: true,
-  secure: isProd ? true : false,
-  sameSite: isProd ? "lax" : "lax",
+  secure: isProd,
+  sameSite: isProd ? "none" : "lax",
   domain: isProd ? ".dulceslachacra.com" : undefined,
   path: "/",
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-
+  maxAge: 7 * 24 * 60 * 60 * 1000,
 });
-
-
 const { hashedPassword, ...safeAdmin } = admin;
   res.status(200).json(safeAdmin)
 }
@@ -67,7 +64,7 @@ export const logoutAdmin = (req: Request, res: Response) => {
   res.clearCookie("token", {
     httpOnly: true,
     secure: isProd,
-    sameSite: isProd ? "lax" : "lax", 
+  sameSite: isProd ? "none" : "lax",
     domain: isProd ? ".dulceslachacra.com" : undefined,
     path: "/",
     
