@@ -51,7 +51,7 @@ app.use(
 );
 app.use("/admin/products", adminProductsRoutes);
 app.use("/admin/orders", adminOrdersRoutes);
-app.use('/products', productsRoutes)
+app.use('/store/products', productsRoutes)
 app.use('/orders', orderRoutes)
 app.use('/payments', paymentRoutes)
 app.use(StockRoutes)
