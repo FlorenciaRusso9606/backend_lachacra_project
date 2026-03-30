@@ -10,18 +10,9 @@ import multer from "multer";
 import path from "node:path";
 import crypto from "node:crypto";
 
-const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => {
-    cb(null, "uploads/products");
-  },
-  filename: (_req, file, cb) => {
-    const ext = path.extname(file.originalname); 
-    const name = crypto.randomUUID() + ext;
-    cb(null, name);
-  },
+const upload = multer({
+  storage: multer.memoryStorage(),
 });
-
-const upload = multer({ storage });
 
 const router = Router();
 
