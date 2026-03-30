@@ -144,4 +144,4 @@ El proyecto incluye:
 ![Admin](./screenshots/admin.png)
 
 ### Mercado Pago
-![Mercado Pago](./screenshots/mercado-pago.png)
+![Mercado Pago](./backend_la_chacra/public/screenshot/mercado-pago.png)
