@@ -132,16 +132,16 @@ El proyecto incluye:
 ## 📷 Capturas
 
 ### Home
-![Home](./screenshots/home.png)
+![Home](/public/screenshots/home.png)
 
 ### Productos
-![Productos](./screenshots/products.png)
+![Productos](/public/screenshots/products.png)
 
 ### Carrito
-![Carrito](./screenshots/cart.png)
+![Carrito](/public/screenshots/cart.png)
 
 ### Panel Admin
-![Admin](./screenshots/admin.png)
+![Admin](/public/screenshots/admin.png)
 
 ### Mercado Pago
-![Mercado Pago](./backend_la_chacra/public/screenshot/mercado-pago.png)
+![Mercado Pago](/public/screenshots/mercado-pago.png)
