@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { getProducts, createProduct } from '../controllers/products.controller.js'
+import { getProducts, createProduct } from '../controllers/products.controller'
 import { authenticateJWT } from '../middlewares/auth'
 const router = Router()
 

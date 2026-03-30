@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { prisma } from '../lib/prisma.js'
 import { AppError } from '../errors/AppError'
-import { preferenceClient } from '../services/mercadoPago.client.js'
+import { preferenceClient } from '../services/mercadoPago.client'
 
 
 export const getAllPayments = async (req: Request, res: Response) => {
