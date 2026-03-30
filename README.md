@@ -7,11 +7,6 @@ E-commerce orientado a mostrar productos regionales y ofrecer una experiencia vi
 
 🔗 Demo en producción: https://dulceslachacra.com
 
-🔐 Panel admin: https://dulceslachacra.com/dashboard-lch-2026
-(Las credenciales no son públicas)
-
-
-
 
 ## Tecnologías utilizadas
 
@@ -38,6 +33,7 @@ E-commerce orientado a mostrar productos regionales y ofrecer una experiencia vi
 
 ### Infraestructura
 - **Railway (backend + DB)**
+- **AWS S3 (almacenamiento de imágenes)**
 - **Dominio real en producción**
 ---
 ## ✨ Funcionalidades
@@ -65,6 +61,7 @@ E-commerce orientado a mostrar productos regionales y ofrecer una experiencia vi
 
 - Mercado Pago: pagos online
 - Resend: emails transaccionales
+- AWS S3: almacenamiento y entrega de imágenes de productos
 - Google Sheets: stock sincronizado con clientas
 
 ---
