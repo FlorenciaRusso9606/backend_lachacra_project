@@ -6,7 +6,8 @@ export default defineConfig({
     globals: true,
     environment: "node",
    globalSetup: ["./test/setup/global-setup.ts"],
-    setupFiles: ["./test/setup/setup-env.ts"],
+    setupFiles: ["./test/setup/setup-env.ts",
+      "./test/setup/global-mocks.ts",],
    pool: 'forks',
     maxWorkers: 1,
    
