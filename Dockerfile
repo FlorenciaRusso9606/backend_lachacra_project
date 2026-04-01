@@ -8,7 +8,9 @@ RUN npm ci
 
 COPY . .
 
-# IMPORTANTE: generar prisma client
+ENV DATABASE_URL="postgresql://user:pass@localhost:5432/db"
+
+# generar prisma client
 RUN npx prisma generate
 
 RUN npm run build
@@ -19,6 +21,8 @@ FROM node:20-alpine AS runner
 WORKDIR /app
 
 COPY package*.json ./
+
+
 RUN npm ci --omit=dev
 
 # Copiar build y prisma
