@@ -4,7 +4,15 @@
   "scripts": {
     "dev": "tsx src/index.ts",
     "build": "prisma generate && tsc",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "test:db:up": "docker compose -f docker-compose.test.yml up -d",
+    "test:db:down": "docker compose -f docker-compose.test.yml down",
+    "test:db:reset": "docker compose -f docker-compose.test.yml down -v && docker compose -f docker-compose.test.yml up -d",
+    "test:db:wait": "wait-on tcp:5433",
+    "test:db:setup": "cross-env DATABASE_URL=postgresql://test:test@localhost:5433/la_chacra_test prisma db push",
+    "test": "cross-env NODE_ENV=test vitest",
+    "test:run": "cross-env NODE_ENV=test vitest run",
+    "test:full": "npm run test:db:up && npm run test:db:wait && npm run test:db:setup && npm run test:run"
   },
   "keywords": [],
   "author": "",
@@ -12,7 +20,7 @@
   "description": "",
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1019.0",
-    "@prisma/adapter-pg": "^7.2.0",
+    "@prisma/adapter-pg": "^7.6.0",
     "@prisma/client": "^7.2.0",
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
@@ -36,9 +44,15 @@
     "@types/node": "^25.0.3",
     "@types/nodemailer": "^7.0.9",
     "@types/pg": "^8.16.0",
+    "@types/supertest": "^7.2.0",
+    "@vitest/ui": "^4.1.2",
+    "cross-env": "^10.1.0",
     "prisma": "^7.2.0",
+    "supertest": "^7.2.2",
     "tsx": "^4.21.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.2",
+    "wait-on": "^9.0.4"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
