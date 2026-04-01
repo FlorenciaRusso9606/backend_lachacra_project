@@ -1,4 +1,8 @@
 .env
+.env.test
 node_modules
 /generated/prisma
 dist/
+*.log
+.DS_Store
+Thumbs.db
