@@ -3,6 +3,6 @@ import { mercadoPagoWebhook } from '../controllers/webhook.controller.js'
 
 const router = Router()
 
-router.post('/mercadopago', mercadoPagoWebhook)
+router.post('/', mercadoPagoWebhook)
 
 export default router

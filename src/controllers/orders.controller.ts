@@ -8,8 +8,6 @@ type OrderItemInput = {
 }
 
 
-
-
 export const getAllOrders = async (req: Request, res: Response) => {
   const orders = await prisma.order.findMany({
     orderBy: { createdAt: 'desc' },
@@ -120,7 +118,11 @@ const {
   if (!items || !Array.isArray(items) || items.length === 0) {
     throw new AppError('Items inválidos', 400)
   }
-
+for (const item of items) {
+  if (!Number.isInteger(item.quantity) || item.quantity <= 0) {
+    throw new AppError("La cantidad debe ser mayor a cero", 400);
+  }
+}
 const order = await prisma.$transaction(async (tx) => {
       const products = await tx.product.findMany({
       where: {

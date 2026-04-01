@@ -41,7 +41,8 @@ res.cookie("token", token, {
   maxAge: 7 * 24 * 60 * 60 * 1000,
 });
 const { hashedPassword, ...safeAdmin } = admin;
-  res.status(200).json(safeAdmin)
+
+res.status(200).json({ ...safeAdmin, token })
 }
 
 

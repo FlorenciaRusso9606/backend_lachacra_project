@@ -19,7 +19,7 @@ const router = Router();
 router.use(authenticateJWT);
 
 router.get("/", getAllProductsAdmin);
-router.post("/", createProduct);
+router.post("/", authenticateJWT, upload.single("file"), createProduct);
 router.put("/:id", authenticateJWT, upload.single("image"), updateProduct);
 router.delete("/:id", deleteProduct);
 
