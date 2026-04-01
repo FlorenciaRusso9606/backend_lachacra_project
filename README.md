@@ -35,6 +35,9 @@ E-commerce orientado a mostrar productos regionales y ofrecer una experiencia vi
 - **Railway (backend + DB)**
 - **AWS S3 (almacenamiento de imágenes)**
 - **Dominio real en producción**
+- **GitHub Actions (CI / testing automático)**
+- **Docker (entorno de ejecución reproducible)**
+
 ---
 ## ✨ Funcionalidades
 
@@ -71,7 +74,7 @@ E-commerce orientado a mostrar productos regionales y ofrecer una experiencia vi
 - Backend y base de datos desplegados en Railway
 - Frontend en producción con dominio propio
 
----
+
 
 ## 🎨 Diseño
 -Diseño responsive optimizado para mobile, tablet y desktop
@@ -119,6 +122,63 @@ npm start
 ```bash
 npm run format
 ```
+
+---
+## 🧪 Testing
+
+El proyecto cuenta con tests de integración utilizando base de datos real y mocks para servicios externos.
+
+### Tecnologías
+- Vitest
+- Supertest
+- Prisma (DB de testing)
+
+### Características
+- Base de datos aislada para tests
+- Mocks globales para:
+  - AWS S3
+  - Emails (Resend)
+  - Mercado Pago
+- Tests idempotentes (webhooks)
+- Reseteo de base de datos entre tests
+
+### Ejecutar tests
+
+```bash
+npm run test:run
+
+---
+
+```md
+## 🐳 Docker
+
+El backend puede ejecutarse en contenedores Docker para entornos de producción.
+
+### Build de la imagen
+
+```bash
+docker build -t la-chacra-backend .
+
+---
+
+```md
+## ⚙️ CI (Integración Continua)
+
+El proyecto utiliza GitHub Actions para ejecutar tests automáticamente.
+
+### Flujo
+
+- Se ejecuta en:
+  - push a `main` y `develop`
+  - pull requests a `main`
+- Levanta una base de datos PostgreSQL en contenedor
+- Ejecuta migraciones
+- Corre todos los tests
+
+### Objetivo
+
+- Detectar errores antes de deploy
+- Garantizar estabilidad del backend
 ## SEO
 
 El proyecto incluye:
