@@ -180,7 +180,7 @@ El proyecto utiliza GitHub Actions para ejecutar tests automáticamente.
 - Detectar errores antes de deploy
 - Garantizar estabilidad del backend
 ## SEO
-
+```
 El proyecto incluye:
 
 - metadata en layout.tsx
