@@ -11,7 +11,7 @@
     "test:db:wait": "wait-on tcp:5433",
     "test:db:setup": "cross-env DATABASE_URL=postgresql://test:test@localhost:5433/la_chacra_test prisma db push",
     "test": "cross-env NODE_ENV=test vitest",
-    "test:run": "cross-env NODE_ENV=test vitest run",
+    "test:run": "prisma generate && cross-env NODE_ENV=test vitest run",
     "test:full": "npm run test:db:up && npm run test:db:wait && npm run test:db:setup && npm run test:run"
   },
   "keywords": [],
