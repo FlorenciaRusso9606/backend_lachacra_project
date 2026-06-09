@@ -1,4 +1,5 @@
 import express from 'express'
+import pinoHttp from 'pino-http'
 import productsRoutes from './routes/products.routes'
 import orderRoutes from './routes/orders.routes'
 import paymentRoutes from './routes/payments.routes'
@@ -13,6 +14,7 @@ import cors from "cors"
 import cookieParser from "cookie-parser";
 import path from 'node:path'
 import 'dotenv/config'
+import { logger } from './lib/logger'
 
 
 
@@ -20,6 +22,7 @@ const isProd = process.env.NODE_ENV === "production";
 
 export const app = express()
 app.set('trust proxy', 1)
+app.use(pinoHttp({ logger }))
 
 app.use(cors({
   origin: isProd

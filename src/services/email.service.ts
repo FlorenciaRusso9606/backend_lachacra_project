@@ -1,5 +1,8 @@
 import { Resend } from "resend";
 import { OrderEmailPayload } from "../types/OrderEmailPayload";
+import { logger } from "../lib/logger";
+
+const log = logger.child({ module: 'email' })
 
 const FROM = process.env.MAIL_FROM ?? "La Chacra <no-reply@dulceslachacra.com>";
 
@@ -40,7 +43,7 @@ export async function sendNewOrderEmail(order: OrderEmailPayload) {
       <p><strong>Total:</strong> $${order.total}</p>
     `,
   });
-  console.log('[EMAIL] Resend response', result)
+  log.info({ result }, 'email sent')
 }
 
 export async function sendCustomerOrderEmail(order: OrderEmailPayload) {
@@ -67,5 +70,5 @@ export async function sendCustomerOrderEmail(order: OrderEmailPayload) {
       <p><strong>Total:</strong> $${order.total}</p>
     `,
   });
-  console.log('[EMAIL] Resend response', result)
+  log.info({ result }, 'email sent')
 }

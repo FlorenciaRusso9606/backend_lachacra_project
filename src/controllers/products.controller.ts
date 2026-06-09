@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { prisma } from "../lib/prisma";
 import { AppError } from "../errors/AppError";
+import { logger } from "../lib/logger";
 import { CategoryStatus } from "@prisma/client";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { s3 } from "../lib/s3";
@@ -281,7 +282,7 @@ export const syncStock = async (req: Request, res: Response) => {
       product: updatedProduct,
     });
   } catch (error) {
-    console.error("sync-stock error:", error);
+    logger.error({ err: error }, 'sync-stock error')
     return res.status(500).json({
       ok: false,
       message: "Error sincronizando stock",

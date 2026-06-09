@@ -2,14 +2,17 @@ import { Request, Response } from 'express'
 import { paymentClient } from '../services/mercadoPago.client.js'
 import { prisma } from '../lib/prisma.js'
 import { OrderItem } from '@prisma/client'
+import { logger } from '../lib/logger.js'
 
 import {
   sendNewOrderEmail,
   sendCustomerOrderEmail,
 } from '../services/email.service.js'
 
+const log = logger.child({ module: 'mp-webhook' })
+
 export const mercadoPagoWebhook = async (req: Request, res: Response) => {
-  console.log('[MP WEBHOOK] Incoming webhook')
+  log.info('incoming webhook')
 
 
   const dataId =
@@ -18,12 +21,12 @@ export const mercadoPagoWebhook = async (req: Request, res: Response) => {
     req.query?.id
 
   if (!dataId) {
-    console.log('[MP WEBHOOK] No dataId, ignoring')
+    log.info('no dataId, ignoring')
     return res.sendStatus(200)
   }
 
   if (req.body?.type && req.body.type !== 'payment') {
-    console.log('[MP WEBHOOK] Not a payment event, ignoring')
+    log.info({ type: req.body.type }, 'not a payment event, ignoring')
     return res.sendStatus(200)
   }
 
@@ -36,7 +39,7 @@ export const mercadoPagoWebhook = async (req: Request, res: Response) => {
       requestOptions: { timeout: 5000 },
     })
   } catch {
-    console.error('[MP WEBHOOK] Error fetching payment from MP', dataId)
+    log.error({ dataId }, 'error fetching payment from MP')
     return res.sendStatus(200)
   }
 
@@ -45,7 +48,7 @@ export const mercadoPagoWebhook = async (req: Request, res: Response) => {
     !mpPayment?.status ||
     typeof mpPayment.transaction_amount !== 'number'
   ) {
-    console.error('[MP WEBHOOK] Invalid MP payment payload')
+    log.error({ mpPaymentId: mpPayment?.id }, 'invalid MP payment payload')
     return res.sendStatus(200)
   }
 
@@ -66,19 +69,19 @@ export const mercadoPagoWebhook = async (req: Request, res: Response) => {
   })
 
   if (!payment) {
-    console.error('[MP WEBHOOK] Payment not found in DB')
+    log.error({ dataId }, 'payment not found in DB')
     return res.sendStatus(200)
   }
 
- 
+
   if (payment.amount !== mpPayment.transaction_amount) {
-    console.error('[MP WEBHOOK] Amount mismatch')
+    log.error({ paymentId: payment.id, expected: payment.amount, received: mpPayment.transaction_amount }, 'amount mismatch')
     return res.sendStatus(200)
   }
 
 
   if (mpPayment.status === 'approved') {
-    console.log('[MP WEBHOOK] Payment approved', payment.id)
+    log.info({ paymentId: payment.id }, 'payment approved')
 
     const updated = await prisma.payment.updateMany({
       where: {
@@ -96,7 +99,7 @@ export const mercadoPagoWebhook = async (req: Request, res: Response) => {
     })
 
     if (updated.count === 0) {
-      console.log('[MP WEBHOOK] Already processed, skipping')
+      log.info({ paymentId: payment.id }, 'already processed, skipping')
       return res.sendStatus(200)
     }
 
@@ -118,7 +121,7 @@ export const mercadoPagoWebhook = async (req: Request, res: Response) => {
         await sendCustomerOrderEmail(order)
       }
     } catch (err) {
-      console.error('[EMAIL] Error sending emails', err)
+      log.error({ err, orderId: payment.orderId }, 'error sending emails')
     }
 
     return res.sendStatus(200)
@@ -126,12 +129,12 @@ export const mercadoPagoWebhook = async (req: Request, res: Response) => {
 
 
   if (mpPayment.status === 'pending' || mpPayment.status === 'in_process') {
-    console.log('[MP WEBHOOK] Payment pending/in_process')
+    log.info({ paymentId: payment.id, status: mpPayment.status }, 'payment pending/in_process')
     return res.sendStatus(200)
   }
 
 
-  console.log('[MP WEBHOOK] Payment rejected/cancelled', mpPayment.status)
+  log.info({ paymentId: payment.id, status: mpPayment.status }, 'payment rejected/cancelled')
 
   const items: OrderItem[] = await prisma.orderItem.findMany({
     where: { orderId: payment.orderId },

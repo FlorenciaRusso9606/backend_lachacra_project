@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 import { AppError } from '../errors/AppError.js'
+import { logger } from '../lib/logger.js'
 
 export const errorMiddleware = (
   err: Error,
@@ -13,7 +14,7 @@ export const errorMiddleware = (
     })
   }
 
-  console.error(err)
+  logger.error({ err }, 'unhandled error')
 
   return res.status(500).json({
     error: 'Internal server error',
