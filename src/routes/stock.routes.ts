@@ -1,5 +1,5 @@
-import { Router } from 'express'
-import { syncStock } from '../controllers/products.controller'
+import { Router } from "express"
+import { syncStock } from "../controllers/products.controller"
 import { stockAuth } from "../middlewares/stockAuth"
 const router = Router()
 

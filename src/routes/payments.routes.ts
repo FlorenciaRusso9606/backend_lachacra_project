@@ -1,6 +1,6 @@
-import { Router } from 'express'
-import { createMercadoPagoPayment, getAllPayments , getFailedPayments, getPendingPayments  } from '../controllers/payment.controller'
-import { authenticateJWT } from '../middlewares/auth'
+import { Router } from "express"
+import { createMercadoPagoPayment, getAllPayments , getFailedPayments, getPendingPayments  } from "../controllers/payment.controller"
+import { authenticateJWT } from "../middlewares/auth"
 const router = Router()
 
 router.post('/mercadopago', createMercadoPagoPayment)

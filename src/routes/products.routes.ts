@@ -1,7 +1,7 @@
-import { Router } from 'express'
-import { getProducts, createProduct, updateProduct } from '../controllers/products.controller'
-import { authenticateJWT } from '../middlewares/auth'
-import multer from "multer";
+import { Router } from "express"
+import { getProducts, createProduct, updateProduct } from "../controllers/products.controller"
+import { authenticateJWT } from "../middlewares/auth"
+import multer from "multer"
 
 const upload = multer({
   storage: multer.memoryStorage(),

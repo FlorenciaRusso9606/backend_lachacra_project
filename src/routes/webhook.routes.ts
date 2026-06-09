@@ -1,5 +1,5 @@
-import { Router } from 'express'
-import { mercadoPagoWebhook } from '../controllers/webhook.controller.js'
+import { Router } from "express"
+import { mercadoPagoWebhook } from "../controllers/webhook.controller"
 
 const router = Router()
 

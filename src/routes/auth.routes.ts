@@ -1,6 +1,6 @@
-import { Router } from 'express'
-import { loginAdmin, logoutAdmin, getUser } from '../controllers/admin.controller'
-import { authenticateJWT } from '../middlewares/auth'
+import { Router } from "express"
+import { loginAdmin, logoutAdmin, getUser } from "../controllers/admin.controller"
+import { authenticateJWT } from "../middlewares/auth"
 const router = Router()
 
 router.post('/login', loginAdmin)

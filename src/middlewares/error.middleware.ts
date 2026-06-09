@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from 'express'
-import { AppError } from '../errors/AppError.js'
-import { logger } from '../lib/logger.js'
+import { Request, Response, NextFunction } from "express"
+import { AppError } from "../errors/AppError"
+import { logger } from "../lib/logger"
 
 export const errorMiddleware = (
   err: Error,

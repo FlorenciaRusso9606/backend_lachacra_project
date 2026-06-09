@@ -1,6 +1,6 @@
-import { Resend } from "resend";
-import { OrderEmailPayload } from "../types/OrderEmailPayload";
-import { logger } from "../lib/logger";
+import { Resend } from "resend"
+import { OrderEmailPayload } from "../types/OrderEmailPayload"
+import { logger } from "../lib/logger"
 
 const log = logger.child({ module: 'email' })
 

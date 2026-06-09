@@ -1,13 +1,13 @@
-import { Request, Response } from 'express'
-import { paymentClient } from '../services/mercadoPago.client.js'
-import { prisma } from '../lib/prisma.js'
-import { OrderItem } from '@prisma/client'
-import { logger } from '../lib/logger.js'
+import { Request, Response } from "express"
+import { paymentClient } from "../services/mercadoPago.client"
+import { prisma } from "../lib/prisma"
+import { OrderItem } from "@prisma/client"
+import { logger } from "../lib/logger"
 
 import {
   sendNewOrderEmail,
   sendCustomerOrderEmail,
-} from '../services/email.service.js'
+} from "../services/email.service"
 
 const log = logger.child({ module: 'mp-webhook' })
 

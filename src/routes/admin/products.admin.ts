@@ -1,14 +1,14 @@
-import { Router } from "express";
+import { Router } from "express"
 import {
   getAllProductsAdmin,
   createProduct,
   updateProduct,
   deleteProduct,
-} from "../../controllers/products.controller";
-import { authenticateJWT } from "../../middlewares/auth";
-import multer from "multer";
-import path from "node:path";
-import crypto from "node:crypto";
+} from "../../controllers/products.controller"
+import { authenticateJWT } from "../../middlewares/auth"
+import multer from "multer"
+import path from "node:path"
+import crypto from "node:crypto"
 
 const upload = multer({
   storage: multer.memoryStorage(),

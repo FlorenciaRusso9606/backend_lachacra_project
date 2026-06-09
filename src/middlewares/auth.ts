@@ -1,8 +1,8 @@
-import { Request, Response, NextFunction } from "express";
-import jwt from "jsonwebtoken";
-import { prisma } from '../lib/prisma'
-import { AppError } from "../errors/AppError";
-import { Admin } from "../types/Admin";
+import { Request, Response, NextFunction } from "express"
+import jwt from "jsonwebtoken"
+import { prisma } from "../lib/prisma"
+import { AppError } from "../errors/AppError"
+import { Admin } from "../types/Admin"
 declare global {
   namespace Express {
     interface Request {

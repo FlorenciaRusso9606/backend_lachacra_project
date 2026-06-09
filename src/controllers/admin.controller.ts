@@ -1,11 +1,11 @@
-import { Request, Response } from "express";
-import { prisma } from '../lib/prisma'
-import * as bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+import { Request, Response } from "express"
+import { prisma } from "../lib/prisma"
+import * as bcrypt from "bcrypt"
+import jwt from "jsonwebtoken"
 
 const isProd = process.env.NODE_ENV === "production";
 
-import { AppError } from "../errors/AppError";
+import { AppError } from "../errors/AppError"
 const JWT_SECRET = process.env.JWT_SECRET;
 if (!JWT_SECRET) {
   throw new Error("Falta JWT_SECRET en .env");

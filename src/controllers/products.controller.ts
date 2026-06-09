@@ -1,11 +1,11 @@
-import { Request, Response } from "express";
-import { prisma } from "../lib/prisma";
-import { AppError } from "../errors/AppError";
-import { logger } from "../lib/logger";
-import { CategoryStatus } from "@prisma/client";
-import { PutObjectCommand } from "@aws-sdk/client-s3";
-import { s3 } from "../lib/s3";
-import crypto from "node:crypto";
+import { Request, Response } from "express"
+import { prisma } from "../lib/prisma"
+import { AppError } from "../errors/AppError"
+import { logger } from "../lib/logger"
+import { CategoryStatus } from "@prisma/client"
+import { PutObjectCommand } from "@aws-sdk/client-s3"
+import { s3 } from "../lib/s3"
+import crypto from "node:crypto"
 
 export const getProducts = async (_req: Request, res: Response) => {
   const products = await prisma.product.findMany({

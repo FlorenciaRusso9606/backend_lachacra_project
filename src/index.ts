@@ -1,5 +1,5 @@
-import { app } from './app'
-import { logger } from './lib/logger'
+import { app } from "./app"
+import { logger } from "./lib/logger"
 
 const port = Number(process.env.PORT) || 4000
 

@@ -1,20 +1,20 @@
-import express from 'express'
-import pinoHttp from 'pino-http'
-import productsRoutes from './routes/products.routes'
-import orderRoutes from './routes/orders.routes'
-import paymentRoutes from './routes/payments.routes'
-import webhooksRoutes from './routes/webhook.routes'
+import express from "express"
+import pinoHttp from "pino-http"
+import productsRoutes from "./routes/products.routes"
+import orderRoutes from "./routes/orders.routes"
+import paymentRoutes from "./routes/payments.routes"
+import webhooksRoutes from "./routes/webhook.routes"
 import AuthRoutes from "./routes/auth.routes"
 import StockRoutes from "./routes/stock.routes"
-import adminProductsRoutes from './routes/admin/products.admin'
-import adminOrdersRoutes from './routes/admin/orders.admin'
-import { errorMiddleware } from './middlewares/error.middleware'
-import rateLimit from 'express-rate-limit'
+import adminProductsRoutes from "./routes/admin/products.admin"
+import adminOrdersRoutes from "./routes/admin/orders.admin"
+import { errorMiddleware } from "./middlewares/error.middleware"
+import rateLimit from "express-rate-limit"
 import cors from "cors"
-import cookieParser from "cookie-parser";
-import path from 'node:path'
-import 'dotenv/config'
-import { logger } from './lib/logger'
+import cookieParser from "cookie-parser"
+import path from "node:path"
+import "dotenv/config"
+import { logger } from "./lib/logger"
 
 
 

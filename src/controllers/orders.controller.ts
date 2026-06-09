@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
-import { prisma } from '../lib/prisma'
-import { AppError } from '../errors/AppError'
-import { OrderStatus } from '@prisma/client'
+import { Request, Response } from "express"
+import { prisma } from "../lib/prisma"
+import { AppError } from "../errors/AppError"
+import { OrderStatus } from "@prisma/client"
 type OrderItemInput = {
   productId: number
   quantity: number

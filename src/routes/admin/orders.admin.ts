@@ -1,12 +1,12 @@
-import { Router } from "express";
+import { Router } from "express"
 import {
   getAllOrders,
   getOrdersByStatus,
   getOrdersByDate,
   getOrderDetail,
   getPaymentsByOrder,
-} from "../../controllers/orders.controller";
-import { authenticateJWT } from "../../middlewares/auth";
+} from "../../controllers/orders.controller"
+import { authenticateJWT } from "../../middlewares/auth"
 
 const router = Router();
 
