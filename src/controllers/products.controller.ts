@@ -207,16 +207,20 @@ const normalizedWeight =
       throw new AppError("Archivo inválido", 400);
     }
 
-    await s3.send(
-      new PutObjectCommand({
-        Bucket: process.env.AWS_BUCKET_NAME!,
-        Key: key,
-        Body: file.buffer,
-        ContentType: file.mimetype,
-      }),
-    );
+    try {
+      await s3.send(
+        new PutObjectCommand({
+          Bucket: process.env.AWS_BUCKET_NAME!,
+          Key: key,
+          Body: file.buffer,
+          ContentType: file.mimetype,
+        }),
+      );
 
-    data.imageUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
+      data.imageUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
+    } catch (err) {
+      logger.error({ err, productId: id }, "error uploading product image to s3");
+    }
   } else if (shouldRemoveImage) {
     data.imageUrl = null;
   }
