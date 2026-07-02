@@ -6,10 +6,9 @@
     "types": ["node", "vitest/globals"],
     "strict": true,
     "skipLibCheck": true,
-    "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
-      "@test/*": ["test/*"]
+      "@/*": ["./src/*"],
+      "@test/*": ["./test/*"]
     }
   },
   "include": ["src", "test"]
