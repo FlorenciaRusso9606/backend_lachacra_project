@@ -83,30 +83,38 @@ export const mercadoPagoWebhook = async (req: Request, res: Response) => {
   if (mpPayment.status === 'approved') {
     log.info({ paymentId: payment.id }, 'payment approved')
 
-    const updated = await prisma.payment.updateMany({
-      where: {
-        id: payment.id,
-        NOT: {
+    const processed = await prisma.$transaction(async (tx) => {
+      const updated = await tx.payment.updateMany({
+        where: {
+          id: payment.id,
+          NOT: {
+            status: 'approved',
+            emailSent: true,
+          },
+        },
+        data: {
           status: 'approved',
+          providerRef: mpPayment.id.toString(),
           emailSent: true,
         },
-      },
-      data: {
-        status: 'approved',
-        providerRef: mpPayment.id.toString(),
-        emailSent: true,
-      },
+      })
+
+      if (updated.count === 0) {
+        return false
+      }
+
+      await tx.order.update({
+        where: { id: payment.orderId },
+        data: { status: 'paid' },
+      })
+
+      return true
     })
 
-    if (updated.count === 0) {
+    if (!processed) {
       log.info({ paymentId: payment.id }, 'already processed, skipping')
       return res.sendStatus(200)
     }
-
-    await prisma.order.update({
-      where: { id: payment.orderId },
-      data: { status: 'paid' },
-    })
 
     try {
       const order = await prisma.order.findUnique({
