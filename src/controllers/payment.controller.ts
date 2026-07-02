@@ -56,22 +56,27 @@ export const createMercadoPagoPayment = async (
 if (order.expiresAt < new Date()) {
   throw new AppError('La orden está expirada', 410)
 }
-const existingPayment = await prisma.payment.findFirst({
-  where: {
-    orderId: order.id,
-    status: 'pending',
-  },
-})
+  const payment = await prisma.$transaction(async (tx) => {
+    await tx.$queryRaw`SELECT id FROM "Order" WHERE id = ${order.id} FOR UPDATE`
 
-if (existingPayment) {
-  throw new AppError('Ya existe un pago en proceso', 409)
-}
-  const payment = await prisma.payment.create({
-    data: {
-      orderId: order.id,
-      provider: 'mercado_pago',
-      amount: order.total,
-    },
+    const existingPayment = await tx.payment.findFirst({
+      where: {
+        orderId: order.id,
+        status: 'pending',
+      },
+    })
+
+    if (existingPayment) {
+      throw new AppError('Ya existe un pago en proceso', 409)
+    }
+
+    return tx.payment.create({
+      data: {
+        orderId: order.id,
+        provider: 'mercado_pago',
+        amount: order.total,
+      },
+    })
   })
 
 

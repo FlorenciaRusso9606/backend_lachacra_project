@@ -150,6 +150,8 @@ export const mercadoPagoWebhook = async (req: Request, res: Response) => {
     where: { orderId: payment.orderId },
   })
 
+  const sortedItems = [...items].sort((a, b) => a.productId - b.productId)
+
   await prisma.$transaction([
     prisma.payment.update({
       where: { id: payment.id },
@@ -162,7 +164,7 @@ export const mercadoPagoWebhook = async (req: Request, res: Response) => {
       where: { id: payment.orderId },
       data: { status: 'cancelled' },
     }),
-    ...items.map(item =>
+    ...sortedItems.map(item =>
       prisma.product.update({
         where: { id: item.productId },
         data: {

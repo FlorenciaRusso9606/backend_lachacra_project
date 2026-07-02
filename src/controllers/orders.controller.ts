@@ -133,27 +133,27 @@ const order = await prisma.$transaction(async (tx) => {
 const productMap = new Map(products.map(p => [p.id, p]))
 
  for (const item of items) {
-  const product = productMap.get(item.productId)
-
-  if (!product) {
+  if (!productMap.get(item.productId)) {
     throw new AppError(`Producto ${item.productId} no existe`, 404)
-  }
-
-  if (product.stock < item.quantity) {
-    throw new AppError(
-      `Stock insuficiente para ${product.name}`,
-      409
-    )
   }
 }
 
-    for (const item of items) {
-      await tx.product.update({
-        where: { id: item.productId },
+    const sortedItems = [...items].sort((a, b) => a.productId - b.productId)
+
+    for (const item of sortedItems) {
+      const product = productMap.get(item.productId)!
+      const result = await tx.product.updateMany({
+        where: { id: item.productId, stock: { gte: item.quantity } },
         data: {
           stock: { decrement: item.quantity },
         },
       })
+      if (result.count === 0) {
+        throw new AppError(
+          `Stock insuficiente para ${product.name}`,
+          409
+        )
+      }
     }
 
 const total = items.reduce((sum, item) => {
