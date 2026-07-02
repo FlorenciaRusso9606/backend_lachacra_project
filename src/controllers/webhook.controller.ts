@@ -83,6 +83,8 @@ export const mercadoPagoWebhook = async (req: Request, res: Response) => {
   if (mpPayment.status === 'approved') {
     log.info({ paymentId: payment.id }, 'payment approved')
 
+    const mpPaymentId = mpPayment.id.toString()
+
     const processed = await prisma.$transaction(async (tx) => {
       const updated = await tx.payment.updateMany({
         where: {
@@ -94,7 +96,7 @@ export const mercadoPagoWebhook = async (req: Request, res: Response) => {
         },
         data: {
           status: 'approved',
-          providerRef: mpPayment.id.toString(),
+          providerRef: mpPaymentId,
           emailSent: true,
         },
       })
