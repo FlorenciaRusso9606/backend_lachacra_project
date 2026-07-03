@@ -10,14 +10,15 @@ beforeEach(async () => {
 });
 
 describe("Auth - POST /auth/login", () => {
-  it("should return 200 and token when credentials are valid", async () => {
+  it("should return 200 and set an httpOnly cookie when credentials are valid", async () => {
     const res = await request(app).post("/auth/login").send({
       email: "test@test.com",
       password: "123456",
     });
 
     expect(res.status).toBe(200);
-    expect(res.body.token).toBeDefined();
+    expect(res.body.token).toBeUndefined();
+    expect(res.headers["set-cookie"]?.[0]).toMatch(/^token=.*HttpOnly/i);
   });
 
   it("should return 401 when credentials are invalid", async () => {

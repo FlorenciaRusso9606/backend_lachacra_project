@@ -42,7 +42,7 @@ res.cookie("token", token, {
 });
 const { hashedPassword, ...safeAdmin } = admin;
 
-res.status(200).json({ ...safeAdmin, token })
+res.status(200).json(safeAdmin)
 }
 
 

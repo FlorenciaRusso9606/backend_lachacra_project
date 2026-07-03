@@ -12,26 +12,24 @@ vi.mock("@/lib/s3", () => ({
   },
 }));
 
-let token: string;
+let agent: ReturnType<typeof request.agent>;
 
 beforeEach(async () => {
   await resetDatabase();
   await seedTestData();
 
-  const res = await request(app).post("/auth/login").send({
+  agent = request.agent(app);
+  await agent.post("/auth/login").send({
     email: "test@test.com",
     password: "123456",
   });
-
-  token = res.body.token;
 });
 
 
 describe("Products - POST /admin/products", () => {
   it("should create a product with valid data", async () => {
-    const res = await request(app)
+    const res = await agent
       .post("/admin/products")
-      .set("Authorization", `Bearer ${token}`)
       .send({
         name: "Dulce de leche",
         price: 100,
@@ -44,9 +42,8 @@ describe("Products - POST /admin/products", () => {
   });
 
   it("should return 400 when required fields are missing", async () => {
-    const res = await request(app)
+    const res = await agent
       .post("/admin/products")
-      .set("Authorization", `Bearer ${token}`)
       .send({
         name: "",
       });
@@ -55,9 +52,8 @@ describe("Products - POST /admin/products", () => {
   });
 
   it("should return 400 if price is negative", async () => {
-    const res = await request(app)
+    const res = await agent
       .post("/admin/products")
-      .set("Authorization", `Bearer ${token}`)
       .send({
         name: "Test",
         price: -10,
@@ -76,9 +72,8 @@ describe("Products - POST /admin/products", () => {
     },
   });
 
-  const res = await request(app)
+  const res = await agent
     .post("/admin/products")
-    .set("Authorization", `Bearer ${token}`)
     .send({
       name: "Dulce",
       price: 150,
@@ -98,9 +93,8 @@ it("should allow same name with different weight", async () => {
     },
   });
 
-  const res = await request(app)
+  const res = await agent
     .post("/admin/products")
-    .set("Authorization", `Bearer ${token}`)
     .send({
       name: "Dulce",
       price: 150,
@@ -120,9 +114,8 @@ it("should fail when creating duplicate product with same name and null weight",
     },
   });
 
-  const res = await request(app)
+  const res = await agent
     .post("/admin/products")
-    .set("Authorization", `Bearer ${token}`)
     .send({
       name: "Dulce",
       price: 150,
@@ -142,9 +135,8 @@ it("should allow same name when one has weight and the other does not", async ()
     },
   });
 
-  const res = await request(app)
+  const res = await agent
     .post("/admin/products")
-    .set("Authorization", `Bearer ${token}`)
     .send({
       name: "Dulce",
       price: 150,
@@ -159,9 +151,8 @@ it("should allow same name when one has weight and the other does not", async ()
 
 describe("Products - image upload", () => {
   it("should upload image and create product", async () => {
-    const res = await request(app)
+    const res = await agent
       .post("/admin/products")
-      .set("Authorization", `Bearer ${token}`)
       .attach("file", Buffer.from("fake-image"), "test.png")
       .field("name", "Producto con imagen")
       .field("price", "100")
