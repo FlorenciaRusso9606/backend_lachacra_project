@@ -43,6 +43,12 @@ export async function sendNewOrderEmail(order: OrderEmailPayload) {
       <p><strong>Total:</strong> $${order.total}</p>
     `,
   });
+
+  if (result.error) {
+    log.error({ error: result.error }, 'new order email failed')
+    throw new Error(`Failed to send new order email: ${result.error.message}`)
+  }
+
   log.info({ result }, 'email sent')
 }
 
@@ -70,5 +76,11 @@ export async function sendCustomerOrderEmail(order: OrderEmailPayload) {
       <p><strong>Total:</strong> $${order.total}</p>
     `,
   });
+
+  if (result.error) {
+    log.error({ error: result.error }, 'customer order email failed')
+    throw new Error(`Failed to send customer order email: ${result.error.message}`)
+  }
+
   log.info({ result }, 'email sent')
 }
