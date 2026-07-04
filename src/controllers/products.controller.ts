@@ -69,10 +69,7 @@ const displayName = name.trim()
     ...(normalizedWeight !== null && { weight: normalizedWeight }),
   };
 
-  if (normalizedWeight !== null) {
-    data.weight = normalizedWeight;
-  }
-
+ 
   if (category) {
     if (!Object.values(CategoryStatus).includes(category)) {
       throw new AppError("Categoría inválida", 400);
