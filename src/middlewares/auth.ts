@@ -12,7 +12,7 @@ declare global {
 }
 export const authenticateJWT = async(req:Request, res:Response, next: NextFunction) =>{
 
-    const token = req.cookies?.token || (req.headers.authorization?.startsWith("Bearer ") ? req.headers.authorization.split(" ")[1]: null)
+    const token = req.cookies?.token
 
     if (!token) throw new AppError("No hay token provisto", 401)
     
