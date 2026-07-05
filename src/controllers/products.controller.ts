@@ -7,6 +7,8 @@ import { PutObjectCommand } from "@aws-sdk/client-s3"
 import { s3 } from "../lib/s3"
 import crypto from "node:crypto"
 
+export const MAX_PRODUCT_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
+
 export const getProducts = async (_req: Request, res: Response) => {
   const products = await prisma.product.findMany({
     where: { active: true },
@@ -86,6 +88,19 @@ const displayName = name.trim()
 
   if (req.file) {
     const file = req.file;
+
+    if (!file.mimetype.startsWith("image/")) {
+      throw new AppError("Archivo inválido", 400);
+    }
+
+    if (file.size > MAX_PRODUCT_IMAGE_SIZE) {
+      throw new AppError("El archivo supera el tamaño máximo permitido (5MB)", 400);
+    }
+
+    if (!process.env.AWS_BUCKET_NAME || !process.env.AWS_REGION) {
+      throw new AppError("Configuración S3 inválida", 500);
+    }
+
     const safeName = file.originalname.replace(/\s+/g, "-");
     const key = `products/${crypto.randomUUID()}-${safeName}`;
 
@@ -202,6 +217,10 @@ const normalizedWeight =
 
     if (!file.mimetype.startsWith("image/")) {
       throw new AppError("Archivo inválido", 400);
+    }
+
+    if (file.size > MAX_PRODUCT_IMAGE_SIZE) {
+      throw new AppError("El archivo supera el tamaño máximo permitido (5MB)", 400);
     }
 
     try {

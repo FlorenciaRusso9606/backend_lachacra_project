@@ -4,6 +4,7 @@ import {
   createProduct,
   updateProduct,
   deleteProduct,
+  MAX_PRODUCT_IMAGE_SIZE,
 } from "../../controllers/products.controller"
 import { authenticateJWT } from "../../middlewares/auth"
 import multer from "multer"
@@ -12,6 +13,7 @@ import crypto from "node:crypto"
 
 const upload = multer({
   storage: multer.memoryStorage(),
+  limits: { fileSize: MAX_PRODUCT_IMAGE_SIZE },
 });
 
 const router = Router();

@@ -1,10 +1,11 @@
 import { Router } from "express"
-import { getProducts, createProduct, updateProduct } from "../controllers/products.controller"
+import { getProducts, createProduct, updateProduct, MAX_PRODUCT_IMAGE_SIZE } from "../controllers/products.controller"
 import { authenticateJWT } from "../middlewares/auth"
 import multer from "multer"
 
 const upload = multer({
   storage: multer.memoryStorage(),
+  limits: { fileSize: MAX_PRODUCT_IMAGE_SIZE },
 });
 
 
